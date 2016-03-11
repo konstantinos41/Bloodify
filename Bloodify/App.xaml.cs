@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Messaging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +8,8 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.Connectivity;
+using Windows.Networking.PushNotifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -15,6 +18,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
+
 namespace Bloodify
 {
     /// <summary>
@@ -22,6 +26,8 @@ namespace Bloodify
     /// </summary>
     sealed partial class App : Application
     {
+        private NotificationHub hub;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -77,9 +83,30 @@ namespace Bloodify
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
+
+            if (IsInternet())
+            {
+                hub = new NotificationHub("BloodifyNotifacationHub", "Endpoint=sb://bloodifynotifacationhubnamespace.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=TO7ZWYESUxRx05MlzXFSl15L5RRnLSvhVISXjmlQ9So=");
+                InitNotificationAsync();
+            }
+
             // Ensure the current window is active
             Window.Current.Activate();
         }
+
+        private async void InitNotificationAsync()
+        {
+            var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync();
+            await hub.RegisterNativeAsync(channel.Uri);
+        }
+
+        public static bool IsInternet()
+        {
+            ConnectionProfile connections = NetworkInformation.GetInternetConnectionProfile();
+            bool internet = connections != null && connections.GetNetworkConnectivityLevel() == NetworkConnectivityLevel.InternetAccess;
+            return internet;
+        }
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
