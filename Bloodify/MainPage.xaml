@@ -1,14 +1,63 @@
 ﻿<Page
-    x:Class="Bloodify.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:Bloodify"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:System="using:System"
+    x:Class="Bloodify.MainPage"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <TextBlock Text="Bloodify" FontSize="30" HorizontalAlignment="Center" />
-        
+        <ScrollViewer>
+            <StackPanel>
+                <Image HorizontalAlignment="Center" Source="Assets/Untitled-1.png" MaxHeight="140"/>
+
+                <TextBlock Text="Donate Blood, Donate Life" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
+
+
+                <TextBlock Text="About Me" FontSize="22" HorizontalAlignment="Center" Margin="0,30,0,0"/>
+                <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,20,0,0">
+                    <TextBox PlaceholderText="First Name" Margin="0,0,0,0" Width="130"/>
+                    <TextBox PlaceholderText="Last Name"  Margin="20,0,0,0" Width="130"/>
+                </StackPanel>
+                <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,20,0,0">
+                    <ComboBox Margin="0,0,0,0" PlaceholderText="Gender" Width="130">
+                        <TextBlock Text="Male"/>
+                        <TextBlock Text="Female"/>
+                    </ComboBox>
+                    <ComboBox Margin="20,0,0,0" PlaceholderText="Blood Type" Width="130">
+                        <TextBlock Text="A+"/>
+                        <TextBlock Text="A-"/>
+                        <TextBlock Text="B+"/>
+                        <TextBlock Text="B-"/>
+                        <TextBlock Text="AB+"/>
+                        <TextBlock Text="AB-"/>
+                        <TextBlock Text="0+"/>
+                        <TextBlock Text="0-"/>
+                    </ComboBox>
+                </StackPanel>
+                <TextBlock Text="I can give Blood to: A+, B-, AB+" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                <TextBlock Text="I can receive Blood from: 0-, 0+" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+
+
+                <TextBlock Text="My Blood Donations" TextWrapping="Wrap" FontSize="22" HorizontalAlignment="Center" Margin="0,50,0,0"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock Text="Last Donation: " FontSize="18" HorizontalAlignment="Center" />
+                    <TextBlock Text=" Never" FontSize="18" HorizontalAlignment="Center"/>                
+                </StackPanel>
+                <Button Content="Submit a Donation" HorizontalAlignment="Center" Margin="0,10,0,0" Click="Button_Click" />
+
+
+
+                <TextBlock Text="Most Active Donors" TextWrapping="Wrap" FontSize="22" HorizontalAlignment="Center" Margin="0,50,0,0"/>
+                <Button x:Name="EnableDonors" Content="Enable" HorizontalAlignment="Center" Margin="0,10,0,0" Click="Button_Click_1"  />
+
+            </StackPanel>
+        </ScrollViewer>
+
+
+
+
     </Grid>
 </Page>

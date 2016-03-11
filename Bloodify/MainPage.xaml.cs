@@ -30,6 +30,44 @@ namespace Bloodify
 
         }
 
-        
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Windows.UI.Popups.MessageDialog(
+                "If you donated Blood today, click yes. The app will notify you again when the time comes to donate again.",
+                "Submit a Donation");
+
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
+            
+
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+
+            var result = await dialog.ShowAsync();
+            
+            var btn = sender as Button;
+            btn.Content = $"Result: {result.Label} ({result.Id})";
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Windows.UI.Popups.MessageDialog(
+                "If you enable Most Active, you agree that your name and number of donations will be visible to other blood donors.",
+                "Enable Most Active Donors");
+
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
+            dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
+
+
+            dialog.DefaultCommandIndex = 0;
+            dialog.CancelCommandIndex = 1;
+
+            var result = await dialog.ShowAsync();
+
+            var btn = sender as Button;
+            btn.Content = $"Result: {result.Label} ({result.Id})";
+
+            EnableDonors.IsEnabled = false;
+        }
     }
 }
