@@ -9,24 +9,27 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Image HorizontalAlignment="Right" VerticalAlignment="Top" Source="Assets/2000px-Blood_drop_plain.svg.png" MaxHeight="130" Margin="0,130,0,0" Opacity="0.8"/>
+        <Image HorizontalAlignment="Left" VerticalAlignment="Top" Source="Assets/2000px-Blood_drop_plain.svg.png" MaxHeight="130" Margin="0,330,0,0" Opacity="0.8"/>
+
         <ScrollViewer>
             <StackPanel>
                 <Image HorizontalAlignment="Center" Source="Assets/Untitled-1.png" MaxHeight="140"/>
-
+                    
                 <TextBlock Text="Donate Blood, Donate Life" FontSize="20" HorizontalAlignment="Center" Margin="0,-10,0,0"/>
 
 
                 <TextBlock Text="About Me" FontSize="22" HorizontalAlignment="Center" Margin="0,30,0,0"/>
                 <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,20,0,0">
-                    <TextBox PlaceholderText="First Name" Margin="0,0,0,0" Width="130"/>
-                    <TextBox PlaceholderText="Last Name"  Margin="20,0,0,0" Width="130"/>
+                    <TextBox x:Name="FirstNameTxt" PlaceholderText="First Name" Margin="0,0,0,0" Width="130" TextChanged="FirstNameTxt_TextChanged"/>
+                    <TextBox x:Name="LastNameTxt" PlaceholderText="Last Name"  Margin="20,0,0,0" Width="130" TextChanged="LastNameTxt_TextChanged"/>
                 </StackPanel>
                 <StackPanel  HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,20,0,0">
-                    <ComboBox Margin="0,0,0,0" PlaceholderText="Gender" Width="130">
+                    <ComboBox x:Name="GenderComboBox" Margin="0,0,0,0" PlaceholderText="Gender" Width="130" SelectionChanged="GenderComboBox_SelectionChanged">
                         <TextBlock Text="Male"/>
                         <TextBlock Text="Female"/>
                     </ComboBox>
-                    <ComboBox Margin="20,0,0,0" PlaceholderText="Blood Type" Width="130">
+                    <ComboBox x:Name="BloodTypeCompoBox" Margin="20,0,0,0" PlaceholderText="Blood Type" Width="130" SelectionChanged="BloodTypeComboBox_SelectionChanged">
                         <TextBlock Text="A+"/>
                         <TextBlock Text="A-"/>
                         <TextBlock Text="B+"/>
@@ -37,21 +40,59 @@
                         <TextBlock Text="0-"/>
                     </ComboBox>
                 </StackPanel>
-                <TextBlock Text="I can give Blood to: A+, B-, AB+" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                <TextBlock Text="I can receive Blood from: 0-, 0+" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="I can give Blood to:" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="GiveTxt" Text="" FontWeight="SemiBold" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock Text="I can receive Blood from:" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                    <TextBlock x:Name="ReceiveTxt" Text="" FontWeight="SemiBold" TextWrapping="Wrap" FontSize="17" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                </StackPanel>
 
 
                 <TextBlock Text="My Blood Donations" TextWrapping="Wrap" FontSize="22" HorizontalAlignment="Center" Margin="0,50,0,0"/>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
                     <TextBlock Text="Last Donation: " FontSize="18" HorizontalAlignment="Center" />
-                    <TextBlock Text=" Never" FontSize="18" HorizontalAlignment="Center"/>                
+                    <TextBlock Text=" Never" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Center"/>
                 </StackPanel>
                 <Button Content="Submit a Donation" HorizontalAlignment="Center" Margin="0,10,0,0" Click="Button_Click" />
 
 
 
                 <TextBlock Text="Most Active Donors" TextWrapping="Wrap" FontSize="22" HorizontalAlignment="Center" Margin="0,50,0,0"/>
-                <Button x:Name="EnableDonors" Content="Enable" HorizontalAlignment="Center" Margin="0,10,0,0" Click="Button_Click_1"  />
+
+                <Grid HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="80"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Donor's Name" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="1" Text="Type" FontWeight="SemiBold" />
+                    <TextBlock Grid.Column="2" Text="Donations" FontWeight="SemiBold"  />
+                </Grid>
+
+                <ScrollViewer>
+                    <ListView  Name="DonorsList" HorizontalAlignment="Center" MaxHeight="200">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Rectangle Grid.Column="1" Height="1" StrokeThickness="1" Stroke="Black" Opacity="1" VerticalAlignment="Bottom"  />
+                                    <Grid HorizontalAlignment="Center">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Name}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding BloodType}" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Gender}" />
+                                    </Grid>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
 
             </StackPanel>
         </ScrollViewer>

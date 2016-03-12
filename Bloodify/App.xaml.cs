@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Messaging;
+using Microsoft.WindowsAzure.MobileServices;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,9 @@ namespace Bloodify
     /// </summary>
     sealed partial class App : Application
     {
+        public static MobileServiceClient MobileService = new MobileServiceClient(
+        "https://bloodifymobileservice.azure-mobile.net/", "aEpBxNAIWwTVjBHsWhemeUgbxwbOdo33");
+
         private NotificationHub hub;
 
         /// <summary>
