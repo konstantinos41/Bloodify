@@ -54,22 +54,46 @@ namespace Bloodify
 
         private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Windows.UI.Popups.MessageDialog(
+            if (checkPeriodBtwDonations())
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog(
                 "If you donated Blood today, click yes. The app will notify you when the time comes to donate again." +
                 " By clicking yes you agree to share your Name and Donations to other donors.",
                 "Submit a Donation");
 
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
-            dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
+                dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
 
+                dialog.DefaultCommandIndex = 0;
+                dialog.CancelCommandIndex = 1;
 
-            dialog.DefaultCommandIndex = 0;
-            dialog.CancelCommandIndex = 1;
+                var result = await dialog.ShowAsync();
 
-            var result = await dialog.ShowAsync();
+                if (result.Label == "Yes")
+                    SubmitADonation();
+            }
+            else
+            {
+                var dialog = new Windows.UI.Popups.MessageDialog("You must wait at least 56 Days between Blood Donations.");
+                await dialog.ShowAsync();
+            }
 
-            if (result.Label == "Yes")
-                SubmitADonation();
+            
+        }
+
+        private  bool checkPeriodBtwDonations()
+        {
+            string lastDonation = localSettings.Values["Last Donation"].ToString();
+            string today = DateTime.Today.ToString("d");
+            List<int> lastDonationList = lastDonation.Split('/').Select(int.Parse).ToList();
+            List<int> todayList = today.Split('/').Select(int.Parse).ToList();
+
+            int period = (todayList[1] - lastDonationList[1]) + (todayList[0] - lastDonationList[0]) * 30 +
+                (todayList[2] - lastDonationList[2]) * 365;
+
+            if (period > 56)
+                return true;            
+            return false;
         }
 
         private async void SubmitADonation()
