@@ -52,10 +52,10 @@
 
                 <TextBlock Text="My Blood Donations" TextWrapping="Wrap" FontSize="22" HorizontalAlignment="Center" Margin="0,50,0,0"/>
                 <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,10,0,0">
-                    <TextBlock Text="Last Donation: " FontSize="18" HorizontalAlignment="Center" />
-                    <TextBlock Text=" Never" FontWeight="SemiBold" FontSize="18" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Last Donation: " FontSize="17" HorizontalAlignment="Center" />
+                    <TextBlock x:Name="LastDonationTxt" Text=" Never" FontWeight="SemiBold" FontSize="17" HorizontalAlignment="Center"/>
                 </StackPanel>
-                <Button Content="Submit a Donation" HorizontalAlignment="Center" Margin="0,10,0,0" Click="Button_Click" />
+                <Button Content="Submit a Donation" HorizontalAlignment="Center" Margin="0,10,0,0" Click="SubmitButton_Click" />
 
 
 
@@ -68,8 +68,8 @@
                         <ColumnDefinition Width="80"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="Donor's Name" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="1" Text="Type" FontWeight="SemiBold" />
-                    <TextBlock Grid.Column="2" Text="Donations" FontWeight="SemiBold"  />
+                    <TextBlock Grid.Column="1" Text="Type" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Column="2" Text="Donations" FontWeight="SemiBold" HorizontalAlignment="Center" />
                 </Grid>
 
                 <ScrollViewer>
@@ -84,9 +84,9 @@
                                             <ColumnDefinition Width="80"/>
                                             <ColumnDefinition Width="80"/>
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock Text="{Binding Name}" />
-                                        <TextBlock Grid.Column="1" Text="{Binding BloodType}" />
-                                        <TextBlock Grid.Column="2" Text="{Binding Gender}" />
+                                        <TextBlock Text="{Binding Id}" />
+                                        <TextBlock Grid.Column="1" Text="{Binding BloodType}" HorizontalAlignment="Center" />
+                                        <TextBlock Grid.Column="2" Text="{Binding Donations}" HorizontalAlignment="Center"/>
                                     </Grid>
                                 </StackPanel>
                             </DataTemplate>

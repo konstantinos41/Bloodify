@@ -32,10 +32,10 @@ namespace Bloodify
         public MainPage()
         {
             this.InitializeComponent();
-            Initialize();
+            LoadData();
         }
 
-        private async void Initialize()
+        private async void LoadData()
         {
             try
             {
@@ -43,26 +43,25 @@ namespace Bloodify
                 LastNameTxt.Text = localSettings.Values["Last Name"].ToString();
                 GenderComboBox.SelectedIndex = (int)localSettings.Values["Gender"];
                 BloodTypeCompoBox.SelectedIndex = (int)localSettings.Values["Blood Type"];
-                Debug.WriteLine(localSettings.Values["Blood Type"]);
+                LastDonationTxt.Text = " " + localSettings.Values["Last Donation"];
 
-                var items = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
-                DonorsList.ItemsSource = items;
+                var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
+                List<Donor> sortedDonorList = donorList.OrderByDescending(o => o.Donations).ToList();
+                DonorsList.ItemsSource = sortedDonorList;
             }
-            catch
-            {
-
-            }
+            catch {}
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void SubmitButton_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Windows.UI.Popups.MessageDialog(
-                "If you donated Blood today, click yes. The app will notify you again when the time comes to donate again.",
+                "If you donated Blood today, click yes. The app will notify you when the time comes to donate again." +
+                " By clicking yes you agree to share your Name and Donations to other donors.",
                 "Submit a Donation");
 
             dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
             dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
-            
+
 
             dialog.DefaultCommandIndex = 0;
             dialog.CancelCommandIndex = 1;
@@ -71,31 +70,51 @@ namespace Bloodify
 
             if (result.Label == "Yes")
                 SubmitADonation();
-          }
+        }
 
         private async void SubmitADonation()
         {
             if (FirstNameTxt.Text != null && LastNameTxt.Text != null && GenderComboBox.SelectedItem != null)
             {
+                Donor donor = new Donor();
+                donor.Id = FirstNameTxt.Text + " " + LastNameTxt.Text;
+                donor.Gender = (GenderComboBox.SelectedItem as TextBlock).Text;
+                if (BloodTypeCompoBox.SelectedItem != null)
+                    donor.BloodType = (BloodTypeCompoBox.SelectedItem as TextBlock).Text;
+                donor.Donations = 1;
+
+                bool update = false;
+                var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
+                foreach (var c in donorList)
+                {
+                    if (donor.Id == c.Id)
+                    {
+                        donor.Donations = c.Donations + 1;
+                        update = true;
+                    }
+                }
+
                 try
                 {
-                    Donor donor = new Donor();
-                    donor.Name = FirstNameTxt.Text + " " + LastNameTxt.Text;
-                    donor.Gender = (GenderComboBox.SelectedItem as TextBlock).Text;
-                    if (BloodTypeCompoBox.SelectedItem != null)
-                        donor.BloodType = (BloodTypeCompoBox.SelectedItem as TextBlock).Text;
+                    if (update == false)
+                        await App.MobileService.GetTable<Donor>().InsertAsync(donor);
+                    else
+                        await App.MobileService.GetTable<Donor>().UpdateAsync(donor);
+                    
 
-                    await App.MobileService.GetTable<Donor>().InsertAsync(donor);
-                    Initialize();
+                    localSettings.Values["Last Donation"] = DateTime.Today.ToString("d"); ;
+
                 }
                 catch (Exception e)
                 {
                     var dialog = new Windows.UI.Popups.MessageDialog(
-                        "Sorry something went wrong. Check your internet connection and try again.");
+                    "Sorry something went wrong. Check your internet connection and try again.");
                     await dialog.ShowAsync();
+                    Debug.WriteLine(e.ToString());
                 }
 
-                
+                LoadData();
+
             }
             else
             {
@@ -195,9 +214,8 @@ namespace Bloodify
     public class Donor
     {
         public string Id { get; set; }
-        public string Name { get; set; }
         public string Gender { get; set; }
         public string BloodType { get; set; }
-
+        public int Donations { get; set; }
     }
 }
