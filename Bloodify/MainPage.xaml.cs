@@ -43,9 +43,21 @@ namespace Bloodify
                 LastNameTxt.Text = localSettings.Values["Last Name"].ToString();
                 GenderComboBox.SelectedIndex = (int)localSettings.Values["Gender"];
                 BloodTypeCompoBox.SelectedIndex = (int)localSettings.Values["Blood Type"];
-                LastDonationTxt.Text = " " + localSettings.Values["Last Donation"];
 
                 var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
+
+                bool flag = false;
+                foreach (var c in donorList)
+                {
+                    if (FirstNameTxt.Text + " " + LastNameTxt.Text == c.Id)
+                    {
+                        LastDonationTxt.Text = " " + c.Date;
+                        flag = true;
+                    }
+                }
+                if (flag == false)
+                    LastDonationTxt.Text = " Never";
+
                 List<Donor> sortedDonorList = donorList.OrderByDescending(o => o.Donations).ToList();
                 DonorsList.ItemsSource = sortedDonorList;
             }
@@ -57,9 +69,9 @@ namespace Bloodify
             if (checkPeriodBtwDonations())
             {
                 var dialog = new Windows.UI.Popups.MessageDialog(
-                "If you donated Blood today, click yes. The app will notify you when the time comes to donate again." +
-                " By clicking yes you agree to share your Name and Donations to other donors.",
-                "Submit a Donation");
+                    "If you donated Blood today, click yes. The app will notify you when the time comes to donate again." +
+                    " By clicking yes you agree to share your Name and Donations to other donors.",
+                    "Submit a Donation");
 
                 dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
                 dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
@@ -83,7 +95,9 @@ namespace Bloodify
 
         private  bool checkPeriodBtwDonations()
         {
-            string lastDonation = localSettings.Values["Last Donation"].ToString();
+            if (LastDonationTxt.Text == " Never")
+                return true;
+            string lastDonation = LastDonationTxt.Text;
             string today = DateTime.Today.ToString("d");
             List<int> lastDonationList = lastDonation.Split('/').Select(int.Parse).ToList();
             List<int> todayList = today.Split('/').Select(int.Parse).ToList();
@@ -105,34 +119,30 @@ namespace Bloodify
                 donor.Gender = (GenderComboBox.SelectedItem as TextBlock).Text;
                 if (BloodTypeCompoBox.SelectedItem != null)
                     donor.BloodType = (BloodTypeCompoBox.SelectedItem as TextBlock).Text;
-                donor.Donations = 1;
-
-                bool update = false;
-                var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
-                foreach (var c in donorList)
-                {
-                    if (donor.Id == c.Id)
-                    {
-                        donor.Donations = c.Donations + 1;
-                        update = true;
-                    }
-                }
+                donor.Date = DateTime.Today.ToString("d");
+                donor.Donations = 1;                
 
                 try
                 {
+                    bool update = false;
+                    var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
+                    foreach (var c in donorList)
+                    {
+                        if (donor.Id == c.Id)
+                        {
+                            donor.Donations = c.Donations + 1;
+                            update = true;
+                        }
+                    }
                     if (update == false)
                         await App.MobileService.GetTable<Donor>().InsertAsync(donor);
                     else
                         await App.MobileService.GetTable<Donor>().UpdateAsync(donor);
-                    
-
-                    localSettings.Values["Last Donation"] = DateTime.Today.ToString("d"); ;
-
                 }
                 catch (Exception e)
                 {
                     var dialog = new Windows.UI.Popups.MessageDialog(
-                    "Sorry something went wrong. Check your internet connection and try again.");
+                        "Sorry something went wrong. Check your internet connection and try again.");
                     await dialog.ShowAsync();
                     Debug.WriteLine(e.ToString());
                 }
@@ -147,27 +157,6 @@ namespace Bloodify
                 await dialog.ShowAsync();
             }
         }
-
-
-        //private async void Button_Click_1(object sender, RoutedEventArgs e)
-        //{
-        //    var dialog = new Windows.UI.Popups.MessageDialog(
-        //        "If you enable Most Active, you agree that your name and number of donations will be visible to other blood donors.",
-        //        "Enable Most Active Donors");
-
-        //    dialog.Commands.Add(new Windows.UI.Popups.UICommand("Yes") { Id = 0 });
-        //    dialog.Commands.Add(new Windows.UI.Popups.UICommand("No") { Id = 1 });
-
-
-        //    dialog.DefaultCommandIndex = 0;
-        //    dialog.CancelCommandIndex = 1;
-
-        //    var result = await dialog.ShowAsync();
-
-        //    var btn = sender as Button;
-        //    btn.Content = $"Result: {result.Label} ({result.Id})";
-
-        //}
 
 
         private void BloodTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -189,7 +178,7 @@ namespace Bloodify
             else if (selection.Text == "A-")
             {
                 GiveTxt.Text = " A+ A- AB+ AB-";
-                ReceiveTxt.Text = " 0- A+";
+                ReceiveTxt.Text = " 0- A-";
             }
             else if (selection.Text == "A+")
             {
@@ -222,11 +211,13 @@ namespace Bloodify
         private void FirstNameTxt_TextChanged(object sender, TextChangedEventArgs e)
         {
             localSettings.Values["First Name"] = FirstNameTxt.Text;
+            LoadData();
         }
 
         private void LastNameTxt_TextChanged(object sender, TextChangedEventArgs e)
         {
             localSettings.Values["Last Name"] = LastNameTxt.Text;
+            LoadData();
         }
 
         private void GenderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -241,5 +232,6 @@ namespace Bloodify
         public string Gender { get; set; }
         public string BloodType { get; set; }
         public int Donations { get; set; }
+        public string Date { get; set; }
     }
 }

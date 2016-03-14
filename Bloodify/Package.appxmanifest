@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="32376KonstantinosMavrodis.Bloodify" Publisher="CN=96D74FB6-A011-4636-BCAD-3534855500A1" Version="1.1.0.0" />
+  <Identity Name="32376KonstantinosMavrodis.Bloodify" Publisher="CN=96D74FB6-A011-4636-BCAD-3534855500A1" Version="1.1.2.0" />
   <mp:PhoneIdentity PhoneProductId="6c87c53d-7a24-4425-bccb-bcab9b9f9652" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Bloodify</DisplayName>
