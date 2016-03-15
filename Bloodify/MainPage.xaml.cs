@@ -43,7 +43,11 @@ namespace Bloodify
                 LastNameTxt.Text = localSettings.Values["Last Name"].ToString();
                 GenderComboBox.SelectedIndex = (int)localSettings.Values["Gender"];
                 BloodTypeCompoBox.SelectedIndex = (int)localSettings.Values["Blood Type"];
+            }
+            catch { }
 
+            try
+            {                
                 var donorList = new ObservableCollection<Donor>(await App.MobileService.GetTable<Donor>().ToListAsync());
 
                 bool flag = false;
